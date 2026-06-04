@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  doculens-api:
+    build:
+      context: .
+      target: runtime
+    container_name: doculens-api
+    ports:
+      - "8000:8000"
+    environment:
+      - DOCULENS_DEVICE=cpu
+      - DOCULENS_EMBED_MODEL=BAAI/bge-small-en-v1.5
+      - DOCULENS_CHROMA_PERSIST_DIR=/app/data/chroma
+    volumes:
+      - doculens_data:/app/data
+      - ${{HOME}}/.cache/huggingface:/root/.cache/huggingface
+    restart: unless-stopped
+
+volumes:
+  doculens_data:
