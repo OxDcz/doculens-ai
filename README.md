@@ -47,3 +47,8 @@ python doculens.py search index.json "quarterly revenue"
 - `examples/messy_pdf_pipeline.md` — processing a badly scanned report
 - `examples/chunking_example.md` — how text gets split
 - `examples/search_output.md` — what search results look like
+
+
+## Hardware Tested
+- AMD RX 7800 XT (RDNA3)
+- AMD RX 7900 XTX (RDNA3)
