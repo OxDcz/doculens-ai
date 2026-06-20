@@ -1,86 +1,49 @@
-# DocuLens AI
+# doculens-ai
 
-Document analysis toolkit. Extract text, tables, and structure from PDFs and scanned documents. Ask questions about your documents. Get answers with citations.
+DocuLens is my attempt at building a local-first document pipeline for messy PDFs: extract text, detect structure, chunk pages, and make the content searchable without sending documents to external APIs.
+
+## The problem I'm solving
+
+I have a bunch of scanned PDFs — old reports, receipts, academic papers — that are painful to search through. Cloud OCR services work, but I don't want to upload sensitive documents to someone else's server. I wanted something that runs entirely on my machine.
 
 ## What it does
 
-DocuLens takes PDFs (including scanned ones) and gives you:
-- Full text extraction with layout preservation
-- Table detection and extraction to CSV/JSON
-- Semantic search across document collections
-- Q&A with source citations
-- Summarization (extractive + abstractive)
+1. **Extract text** from PDFs (scanned or digital)
+2. **Detect structure**: headings, paragraphs, lists, tables
+3. **Chunk content** into searchable segments
+4. **Local search** across your document collection
 
-It runs locally. No cloud APIs required for the core pipeline.
+## Current state
+
+- Text extraction: works for digital PDFs, basic OCR for scanned docs
+- Structure detection: simple heuristic (font size, position) — not ML-based yet
+- Chunking: paragraph-level, with configurable overlap
+- Search: TF-IDF based, no vector DB yet
+
+## What I'm working on next
+
+- Better table extraction (see `docs/pdf_structure_notes.md`)
+- Hybrid search: TF-IDF + sentence embeddings
+- Processing pipelines for batch jobs
+
+## Design decisions
+
+- **Local-first**: No API calls, no cloud dependencies
+- **Plain Python**: No heavy frameworks — just PyMuPDF, scikit-learn, and stdlib
+- **Incremental**: Process one document at a time, cache results
+
+See `docs/local_first_design.md` for more on the philosophy.
 
 ## Quick start
 
 ```bash
-pip install doculens-ai
-doculens analyze paper.pdf
+pip install -r requirements.txt
+python doculens.py scan ./my_pdfs/ --output index.json
+python doculens.py search index.json "quarterly revenue"
 ```
 
-For OCR on scanned docs:
-```bash
-sudo apt install tesseract-ocr
-doculens analyze scanned.pdf --ocr
-```
+## Examples
 
-Q&A mode:
-```bash
-doculens ask "what were the main findings?" --docs ./papers/
-```
-
-## Architecture
-
-FastAPI backend + React frontend. Models run locally via HuggingFace Transformers.
-
-```
-PDF/Image  ->  OCR/Text  ->  Chunking  ->  Embeddings  ->  Vector DB
-                                                          |
-                                               Q&A Engine <- Query
-```
-
-Embedding model: `all-MiniLM-L6-v2` (default, configurable)
-QA model: `deepset/roberta-base-squad2` (default)
-
-## Docker
-
-```bash
-docker compose up
-# Open http://localhost:3000
-```
-
-GPU passthrough for faster inference:
-```bash
-docker compose -f docker-compose.yml -f docker-compose.gpu.yml up
-```
-
-## API
-
-```python
-from doculens import DocuLens
-
-dl = DocuLens()
-doc = dl.load("report.pdf")
-print(doc.tables[0].to_csv())
-answer = dl.ask("what is the revenue?", docs=[doc])
-print(answer.text, answer.sources)
-```
-
-## Status
-
-Experimental. I use this daily for my own work but it's not battle-tested for production. The table extraction is hit-or-miss with complex layouts. OCR quality depends heavily on scan quality.
-
-Contributions welcome — especially for better table detection models.
-
-MIT License.
-
-
-## Hardware Tested
-- AMD RX 7800 XT (RDNA3)
-- AMD RX 7900 XTX (RDNA3)
-
-## Recent Updates
-- Performance improvements for batch processing
-- Better error messages for common issues
+- `examples/messy_pdf_pipeline.md` — processing a badly scanned report
+- `examples/chunking_example.md` — how text gets split
+- `examples/search_output.md` — what search results look like
