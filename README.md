@@ -52,3 +52,7 @@ python doculens.py search index.json "quarterly revenue"
 ## Hardware Tested
 - AMD RX 7800 XT (RDNA3)
 - AMD RX 7900 XTX (RDNA3)
+
+## Troubleshooting
+**Q: Getting OOM errors?**
+A: Reduce batch size or enable gradient checkpointing.
