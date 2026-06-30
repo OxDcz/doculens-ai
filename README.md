@@ -56,3 +56,7 @@ python doculens.py search index.json "quarterly revenue"
 ## Troubleshooting
 **Q: Getting OOM errors?**
 A: Reduce batch size or enable gradient checkpointing.
+
+## Recent Updates
+- Performance improvements for batch processing
+- Better error messages for common issues
